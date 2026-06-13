@@ -1,4 +1,4 @@
-# Mortgage__Loan_Process_MCP
+# TCS_Mortgage
 
 ## AI-Assisted Property Valuation using MCP (Model Context Protocol)
 
@@ -8,12 +8,12 @@ This project implements an AI-assisted property valuation system using the Model
 
 The system estimates the indicative market value of a property by combining:
 
-- Location data
-- Nearby infrastructure
-- Visual surroundings
-- AI-based reasoning
+* Location data
+* Nearby infrastructure
+* Visual surroundings
+* AI-based reasoning
 
-> **Important:** GenAI is not used to directly execute actions or call APIs. All execution is strictly controlled by the MCP layer.
+**Important:** GenAI is not used to directly execute actions or call APIs. All execution is strictly controlled by the MCP layer.
 
 ---
 
@@ -21,22 +21,22 @@ The system estimates the indicative market value of a property by combining:
 
 Traditional property valuation systems are either:
 
-- Fully rule-based (fixed weights, static logic), or
-- Fully manual (human surveyors)
+* Fully rule-based (fixed weights, static logic)
+* Fully manual (human surveyors)
 
-Our goal is to design a system where:
+The goal is to design a system where:
 
-- GenAI handles decision-making and reasoning
-- MCP enforces execution control
-- External APIs provide real-world data
+* GenAI handles decision-making and reasoning
+* MCP enforces execution control
+* External APIs provide real-world data
 
-This aligns with how enterprise-grade AI systems are designed.
+This aligns with enterprise-grade AI system design.
 
 ---
 
 ## Key Design Principle
 
-> **GenAI thinks. MCP controls. Agents execute.**
+**GenAI thinks. MCP controls. Agents execute.**
 
 ---
 
@@ -52,11 +52,8 @@ FastAPI Endpoint (/mcp/start)
 MCP Router (Orchestrator)
   |
   +--> Workflow Agent (GenAI - Planning)
-  |
   +--> Data Collector Agent (Maps & Places APIs)
-  |
   +--> Vision Agent (Street View / Imagery)
-  |
   +--> Valuation Agent (GenAI - Reasoning)
   |
   v
@@ -65,11 +62,9 @@ Final Unified Response
 
 ---
 
-## MCP Workflow (Step-by-Step)
+## MCP Workflow
 
 ### 1. Client Request
-
-The client sends a property-related request.
 
 Example:
 
@@ -81,89 +76,81 @@ Example:
 
 ### 2. MCP Entry Point
 
-The request enters the system through:
-
 ```http
 POST /mcp/start
 ```
 
-This is where the MCP lifecycle begins.
-
 ### 3. Workflow Agent (GenAI – Planning)
 
-Uses GenAI to analyze the input context.
+Analyzes the input context and decides:
 
-Decides:
+* Whether location data is needed
+* Whether visual verification is required
+* Whether valuation is feasible
 
-- Whether location data is needed
-- Whether visual verification is required
-- Whether valuation is feasible
-
-**GenAI does not call APIs.**  
-GenAI only returns a structured plan.
+GenAI does not call APIs and only returns a structured plan.
 
 ### 4. MCP Router (Execution Control)
 
-The MCP Router:
-
-- Reads the GenAI decision
-- Selectively triggers only the required agents
-- Enforces execution order
-- Prevents uncontrolled execution
+* Reads the GenAI decision
+* Selectively triggers required agents
+* Enforces execution order
+* Prevents uncontrolled execution
 
 ### 5. Data Collector Agent (Deterministic)
 
 Uses:
 
-- Google Maps API
-- Google Places API
+* Google Maps API
+* Google Places API
 
 Fetches:
 
-- Latitude & longitude
-- Nearby amenities (hospitals, schools, IT parks, etc.)
+* Latitude & longitude
+* Nearby amenities (hospitals, schools, IT parks, etc.)
 
 ### 6. Vision Agent (Perception)
 
 Uses:
 
-- Google Street View imagery
+* Google Street View imagery
 
 Provides:
 
-- Qualitative observations
-- Road accessibility
-- Surrounding environment insights
+* Road access observations
+* Surrounding environment analysis
 
-**Vision Agent does not estimate price.**
+Vision Agent does not estimate property price.
 
 ### 7. Valuation Agent (GenAI – Reasoning)
 
-Uses GenAI to:
+Combines structured data and vision context to produce:
 
-- Combine structured data
-- Analyze visual context
-- Generate valuation insights
+* Estimated property value
+* Valuation reasoning
+* Confidence level
 
-Produces:
+GenAI does not fetch data and does not execute APIs.
 
-- Estimated property value
-- Reasoning
-- Confidence level
+---
 
-**GenAI does not fetch data.**  
-**GenAI does not execute APIs.**
+## Agent Types Used
+
+| Agent                | Type                | Purpose                       |
+| -------------------- | ------------------- | ----------------------------- |
+| Workflow Agent       | GenAI Agent         | Planning & decision-making    |
+| Data Collector Agent | Deterministic Agent | Maps & Places data collection |
+| Vision Agent         | Perception Agent    | Visual surroundings analysis  |
+| Valuation Agent      | GenAI Agent         | Property valuation reasoning  |
 
 ---
 
 ## Where GenAI Is Used
 
-GenAI is used only in two places:
+GenAI is used only in:
 
-| Agent | Purpose |
-|---------|---------|
-| Workflow Agent | Planning & decision-making |
-| Valuation Agent | Reasoning & explanation |
+1. Workflow Agent – Planning & decision-making
+2. Valuation Agent – Reasoning & explanation
 
 All execution is handled by MCP-controlled agents.
 
@@ -171,18 +158,16 @@ All execution is handled by MCP-controlled agents.
 
 ## Security & Control (Why MCP)
 
-- API keys are stored in environment variables
-- GenAI never sees API keys
-- GenAI never executes code
-- MCP enforces strict execution boundaries
+* API keys stored in environment variables
+* GenAI never sees API keys
+* GenAI never executes code
+* MCP enforces strict execution boundaries
 
 This mirrors real-world enterprise AI safety practices.
 
 ---
 
 ## Environment Variables
-
-Create a `.env` file:
 
 ```env
 OPENAI_API_KEY=your_openai_api_key
@@ -191,21 +176,21 @@ GOOGLE_MAPS_API_KEY=your_google_maps_api_key
 
 ---
 
-## How to Run the Project
+## How to Run
 
-### Install Dependencies
+Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### Start the Server
+Start server:
 
 ```bash
 uvicorn app.main:app --reload
 ```
 
-### Call the MCP Endpoint
+Call endpoint:
 
 ```http
 POST http://127.0.0.1:8000/mcp/start
@@ -213,12 +198,12 @@ POST http://127.0.0.1:8000/mcp/start
 
 ---
 
-## Output Example
+## Example Output
 
 ```json
 {
   "estimated_value_in_inr": 8500000,
-  "valuation_reasoning": "Property is located near key infrastructure and exhibits good accessibility.",
+  "valuation_reasoning": "...",
   "confidence_level": "medium"
 }
 ```
@@ -227,26 +212,15 @@ POST http://127.0.0.1:8000/mcp/start
 
 ## Limitations
 
-- Government land registry APIs are not publicly available
-- Vision analysis is contextual, not authoritative
-- Generic addresses lead to low-confidence estimates
+* Government land registry APIs are not publicly available
+* Vision analysis is contextual, not authoritative
+* Generic addresses lead to low-confidence estimates
 
 ---
 
 ## Future Enhancements
 
-- Integration with official land rate APIs
-- Deterministic confidence scoring
-- PDF valuation report generation
-- Caching and rate-limit handling
-
----
-
-## Tech Stack
-
-- Python
-- FastAPI
-- OpenAI
-- Google Maps API
-- Google Places API
-- MCP (Model Context Protocol)
+* Integration with official land rate APIs
+* Deterministic confidence scoring
+* PDF valuation report generation
+* Caching and rate-limit handling
